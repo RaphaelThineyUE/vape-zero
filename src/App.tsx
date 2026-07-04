@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Flame, Award, ShoppingCart, Users, CheckSquare, User, 
   ChevronRight, ArrowLeft, Send, Sparkles, AlertTriangle, 
   Play, Pause, LogOut, CheckCircle, MessageSquare, 
-  Plus, DollarSign, Brain, Heart, Wind, Zap, RefreshCw, Star, Info, Bell, TrendingUp, ShieldAlert, Check, Gamepad2, Volume2, VolumeX
+  Plus, DollarSign, Brain, Heart, Wind, Zap, RefreshCw, Star, Info, Bell, TrendingUp, ShieldAlert, Check, Gamepad2, Volume2, VolumeX,
+  Edit2, Target
 } from 'lucide-react';
 import { Quest, BlackMarketItem, SquadPost, Operative, ChatMessage } from './types';
 import { 
@@ -48,6 +50,11 @@ export default function App() {
   const [level, setLevel] = useState<number>(14);
   const [lungCapacity, setLungCapacity] = useState<number>(65);
   const [moneySaved, setMoneySaved] = useState<number>(140);
+  const [savingsGoalName, setSavingsGoalName] = useState<string>('New Laptop');
+  const [savingsGoalAmount, setSavingsGoalAmount] = useState<number>(400);
+  const [isEditingGoal, setIsEditingGoal] = useState<boolean>(false);
+  const [editGoalNameInput, setEditGoalNameInput] = useState<string>('New Laptop');
+  const [editGoalAmountInput, setEditGoalAmountInput] = useState<number>(400);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
 
   // Lists States
@@ -534,10 +541,17 @@ export default function App() {
 
           {/* MOBILE MAIN VIEW SWITCHER */}
           <main className="flex-grow px-5 py-6 flex flex-col gap-8">
-            
-            {/* 1. DASHBOARD VIEW */}
-            {activeTab === 'dashboard' && (
-              <div className="flex flex-col gap-6 animate-fade-in">
+            <AnimatePresence mode="wait">
+              {/* 1. DASHBOARD VIEW */}
+              {activeTab === 'dashboard' && (
+                <motion.div
+                  key="dashboard"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  className="flex flex-col gap-6"
+                >
                 {/* Hero Lung Recovery */}
                 <section className="flex flex-col items-center py-4 relative">
                   <div className="relative w-64 h-64 flex items-center justify-center">
@@ -629,6 +643,183 @@ export default function App() {
                   </div>
                 </section>
 
+                {/* SAVINGS GOAL PROGRESS TRACKER */}
+                <section className="glass-card p-5 rounded-3xl border border-white/5 flex flex-col gap-4 relative overflow-hidden">
+                  {fxEnabled && <div className="scanning-line"></div>}
+                  
+                  <div className="flex justify-between items-start">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-1.5 text-secondary-fixed-dim">
+                        <Target className="w-4 h-4" />
+                        <span className="font-mono text-[10px] font-bold tracking-wider uppercase">SAVINGS TARGET</span>
+                      </div>
+                      <h3 className="font-display text-lg font-black text-primary tracking-tight">
+                        {savingsGoalName}
+                      </h3>
+                    </div>
+                    
+                    <button
+                      onClick={() => {
+                        setEditGoalNameInput(savingsGoalName);
+                        setEditGoalAmountInput(savingsGoalAmount);
+                        setIsEditingGoal(!isEditingGoal);
+                        playSynthesizerChime(523.25, 'sine', 0.1);
+                      }}
+                      className="p-2 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-border text-on-surface-variant hover:text-primary transition-all cursor-pointer"
+                      title="Edit Savings Goal"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {isEditingGoal ? (
+                    <div className="bg-surface-container-low/60 p-4 rounded-2xl border border-border flex flex-col gap-4 animate-fade-in">
+                      <span className="font-mono text-[10px] font-bold text-on-surface-variant">EDIT GOAL CRITERIA</span>
+                      
+                      <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-1">
+                          <label className="font-mono text-[9px] text-on-surface-variant font-bold">GOAL NAME / OBJECTIVE</label>
+                          <input 
+                            type="text" 
+                            value={editGoalNameInput}
+                            onChange={(e) => setEditGoalNameInput(e.target.value)}
+                            maxLength={30}
+                            placeholder="e.g. New Laptop, Concert Tickets"
+                            className="bg-surface-container-lowest border border-border rounded-xl px-3 py-2 text-xs text-primary focus:outline-none focus:border-secondary-container transition-all"
+                          />
+                        </div>
+                        
+                        <div className="flex flex-col gap-1">
+                          <label className="font-mono text-[9px] text-on-surface-variant font-bold">TARGET BUDGET ($)</label>
+                          <input 
+                            type="number" 
+                            min={1}
+                            max={10000}
+                            value={editGoalAmountInput || ''}
+                            onChange={(e) => setEditGoalAmountInput(Number(e.target.value))}
+                            placeholder="e.g. 400"
+                            className="bg-surface-container-lowest border border-border rounded-xl px-3 py-2 text-xs text-primary focus:outline-none focus:border-secondary-container transition-all"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Goal Quick Presets */}
+                      <div className="flex flex-col gap-1.5">
+                        <span className="font-mono text-[9px] text-on-surface-variant font-bold">POPULAR PRESETS</span>
+                        <div className="flex flex-wrap gap-2">
+                          {[
+                            { name: 'Concert Tickets', amt: 150 },
+                            { name: 'New Laptop', amt: 800 },
+                            { name: 'Weekend Trip', amt: 350 },
+                            { name: 'Gamer Console', amt: 500 }
+                          ].map((preset) => (
+                            <button
+                              key={preset.name}
+                              type="button"
+                              onClick={() => {
+                                setEditGoalNameInput(preset.name);
+                                setEditGoalAmountInput(preset.amt);
+                                playSynthesizerChime(587.33, 'triangle', 0.08);
+                              }}
+                              className="text-[9px] font-mono bg-surface-container-highest hover:bg-secondary-container/20 hover:text-secondary-fixed-dim px-2.5 py-1 rounded-lg border border-border cursor-pointer transition-all"
+                            >
+                              {preset.name} (${preset.amt})
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Form Action Buttons */}
+                      <div className="flex gap-2 justify-end mt-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsEditingGoal(false);
+                            playSynthesizerChime(349.23, 'sine', 0.1);
+                          }}
+                          className="px-3 py-1.5 rounded-lg font-mono text-[10px] font-bold text-on-surface-variant hover:text-primary transition-all cursor-pointer"
+                        >
+                          CANCEL
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!editGoalNameInput.trim()) {
+                              triggerToast("Goal name cannot be empty!");
+                              return;
+                            }
+                            if (editGoalAmountInput <= 0) {
+                              triggerToast("Target amount must be greater than $0!");
+                              return;
+                            }
+                            setSavingsGoalName(editGoalNameInput);
+                            setSavingsGoalAmount(editGoalAmountInput);
+                            setIsEditingGoal(false);
+                            playSynthesizerChime(659.25, 'sine', 0.15);
+                            triggerToast(`Target updated to ${editGoalNameInput} ($${editGoalAmountInput})`);
+                          }}
+                          className="px-3 py-1.5 rounded-lg bg-secondary-container text-on-secondary-container font-mono text-[10px] font-black cursor-pointer transition-all active:scale-95"
+                        >
+                          SAVE CHANGES
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-3">
+                      {/* Current vs Target values */}
+                      <div className="flex justify-between items-baseline">
+                        <div className="flex items-baseline gap-1">
+                          <span className="font-display text-2xl font-black text-primary">${moneySaved}</span>
+                          <span className="text-on-surface-variant text-xs">/ ${savingsGoalAmount}</span>
+                        </div>
+                        
+                        <div className="text-right">
+                          <span className="font-mono text-sm font-black text-secondary-fixed-dim">
+                            {savingsGoalAmount > 0 ? Math.round((moneySaved / savingsGoalAmount) * 100) : 0}%
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Progress Bar Container */}
+                      <div className="relative w-full h-3 bg-surface-container-highest rounded-full overflow-hidden border border-white/5">
+                        <div 
+                          className="h-full bg-gradient-to-r from-secondary-container to-surface-tint rounded-full transition-all duration-700 relative"
+                          style={{ 
+                            width: `${Math.min(100, savingsGoalAmount > 0 ? Math.round((moneySaved / savingsGoalAmount) * 100) : 0)}%`,
+                            boxShadow: fxEnabled ? '0 0 10px rgba(0, 238, 252, 0.4)' : 'none'
+                          }}
+                        >
+                          {fxEnabled && (
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Goal Achievement Celebration */}
+                      {moneySaved >= savingsGoalAmount ? (
+                        <div className="flex items-center gap-2 bg-gradient-to-r from-primary-container/10 to-secondary-container/10 border border-primary-container/30 rounded-2xl p-3 animate-pulse-glow">
+                          <Sparkles className="text-primary-container w-5 h-5 shrink-0" />
+                          <div className="flex flex-col">
+                            <span className="font-mono text-[10px] font-black text-primary-container tracking-wider uppercase">GOAL COMPLETED!</span>
+                            <span className="text-[10px] text-on-surface-variant">
+                              You've saved enough to afford your <strong>{savingsGoalName}</strong>! 🎉
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex justify-between items-center text-[10px] text-on-surface-variant font-mono">
+                          <span>
+                            Need <strong>${Math.max(0, savingsGoalAmount - moneySaved)}</strong> more to unlock!
+                          </span>
+                          <span>
+                            Approx. <strong>{Math.ceil(Math.max(0, savingsGoalAmount - moneySaved) / 15)} packs</strong> avoided
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </section>
+
                 {/* Next Ranks Preview */}
                 <section className="glass-card p-5 rounded-2xl border border-white/5 flex flex-col gap-3">
                   <div className="flex justify-between items-center">
@@ -679,12 +870,19 @@ export default function App() {
                     QUICK SESSION: 3 MINS TO DEFEAT URGE
                   </p>
                 </section>
-              </div>
+              </motion.div>
             )}
 
             {/* 2. ARCADE GAME: CRAVE CRUSHER */}
             {activeTab === 'game' && (
-              <div className="flex flex-col gap-5 flex-grow animate-fade-in relative min-h-[460px]">
+              <motion.div
+                key="game"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="flex flex-col gap-5 flex-grow relative min-h-[460px]"
+              >
                 
                 {/* HUD Panel Overlay */}
                 <div className="flex justify-between items-start gap-4 z-10">
@@ -810,12 +1008,19 @@ export default function App() {
                     QUIT
                   </button>
                 </div>
-              </div>
+              </motion.div>
             )}
 
             {/* 3. DAILY QUESTS & BLACK MARKET */}
             {activeTab === 'quests' && (
-              <div className="flex flex-col gap-6 animate-fade-in">
+              <motion.div
+                key="quests"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="flex flex-col gap-6"
+              >
                 {/* Daily quests listing */}
                 <section className="flex flex-col gap-3">
                   <div className="flex justify-between items-end">
@@ -924,12 +1129,19 @@ export default function App() {
                     ))}
                   </div>
                 </section>
-              </div>
+              </motion.div>
             )}
 
             {/* 4. SQUAD RANK & GLOBAL FEED */}
             {activeTab === 'squad' && (
-              <div className="flex flex-col gap-6 animate-fade-in">
+              <motion.div
+                key="squad"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="flex flex-col gap-6"
+              >
                 {/* Leaderboard Card */}
                 <section className="flex flex-col gap-3">
                   <div className="flex justify-between items-end">
@@ -1071,12 +1283,19 @@ export default function App() {
                     </div>
                   ))}
                 </section>
-              </div>
+              </motion.div>
             )}
 
             {/* 5. SQUAD VIBE & CHAT & OPERATIVES */}
             {activeTab === 'mysquad' && (
-              <div className="flex flex-col gap-6 animate-fade-in">
+              <motion.div
+                key="mysquad"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="flex flex-col gap-6"
+              >
                 {/* Squad header */}
                 <section className="mt-2">
                   <div className="glass-card rounded-2xl p-5 relative overflow-hidden flex flex-col gap-4">
@@ -1238,12 +1457,19 @@ export default function App() {
                     TAP OUT OVERRIDE
                   </button>
                 </section>
-              </div>
+              </motion.div>
             )}
 
             {/* 6. VIPER_9 TAP OUT REQUEST SCREEN */}
             {activeTab === 'tapout_detail' && (
-              <div className="flex flex-col gap-6 animate-fade-in">
+              <motion.div
+                key="tapout_detail"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="flex flex-col gap-6"
+              >
                 {/* Profile detail header */}
                 <div className="flex flex-col items-center gap-3 text-center mt-2">
                   <div className="relative">
@@ -1344,8 +1570,9 @@ export default function App() {
                     </div>
                   </div>
                 </section>
-              </div>
+              </motion.div>
             )}
+          </AnimatePresence>
 
           </main>
 
@@ -1564,8 +1791,16 @@ export default function App() {
             </header>
 
             {/* COMMAND ACTIVE SUB-TABS */}
-            {activeTab === 'dashboard' && (
-              <div className="flex flex-col gap-8 animate-fade-in">
+            <AnimatePresence mode="wait">
+              {activeTab === 'dashboard' && (
+                <motion.div
+                  key="desktop-dashboard"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  className="flex flex-col gap-8"
+                >
                 {/* Metrics top cards */}
                 <section className="grid grid-cols-12 gap-6">
                   {/* Lung Capacity ring card */}
@@ -1732,12 +1967,19 @@ export default function App() {
                     </div>
                   </div>
                 </section>
-              </div>
+              </motion.div>
             )}
 
             {/* CRAVE CRUSHER GAME - DESKTOP HUD PORTAL */}
             {activeTab === 'game' && (
-              <div className="flex flex-col gap-6 animate-fade-in">
+              <motion.div
+                key="desktop-game"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="flex flex-col gap-6"
+              >
                 {/* Render game inside the desktop layout */}
                 <div className="glass-card p-6 rounded-3xl flex flex-col gap-4 relative overflow-hidden">
                   <div className="flex justify-between items-center border-b border-white/5 pb-4">
@@ -1846,12 +2088,19 @@ export default function App() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             )}
 
             {/* BLACK MARKET GEAR STORE - DESKTOP LAYOUT */}
             {activeTab === 'quests' && (
-              <div className="flex flex-col gap-6 animate-fade-in">
+              <motion.div
+                key="desktop-quests"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="flex flex-col gap-6"
+              >
                 {/* Store layout */}
                 <section className="flex flex-col gap-4">
                   <div className="flex justify-between items-end border-b border-white/5 pb-4">
@@ -1901,12 +2150,19 @@ export default function App() {
                     ))}
                   </div>
                 </section>
-              </div>
+              </motion.div>
             )}
 
             {/* SQUAD COMMAND MATRIX (Full Screen Dynamic View of 25 cohort members - SCREEN 8) */}
             {activeTab === 'command' && (
-              <div className="flex flex-col gap-6 animate-fade-in">
+              <motion.div
+                key="desktop-command"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="flex flex-col gap-6"
+              >
                 {/* Cohort header details */}
                 <section className="grid grid-cols-3 gap-6">
                   <div className="col-span-2 glass-card p-6 rounded-3xl flex flex-col justify-between border-l-4 border-l-primary-container relative h-44">
@@ -1986,8 +2242,9 @@ export default function App() {
                     })}
                   </div>
                 </section>
-              </div>
+              </motion.div>
             )}
+          </AnimatePresence>
 
           </main>
 
