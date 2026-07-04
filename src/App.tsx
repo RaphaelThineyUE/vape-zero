@@ -16,6 +16,8 @@ import {
   INITIAL_OPERATIVES, 
   INITIAL_CHAT_MESSAGES 
 } from './data';
+import DailyCheckIn from './components/DailyCheckIn';
+import BiometricHealth from './components/BiometricHealth';
 
 export default function App() {
   // Global States
@@ -642,6 +644,29 @@ export default function App() {
                     </div>
                   </div>
                 </section>
+
+                {/* BIOMETRIC HEALTH LOGS */}
+                <BiometricHealth 
+                  streakDays={streakDays}
+                  playSynthesizerChime={playSynthesizerChime}
+                  triggerToast={triggerToast}
+                />
+
+                {/* DAILY HABIT CHECK-IN REWARDS */}
+                <DailyCheckIn 
+                  credits={credits}
+                  setCredits={setCredits}
+                  streakDays={streakDays}
+                  setStreakDays={setStreakDays}
+                  moneySaved={moneySaved}
+                  setMoneySaved={setMoneySaved}
+                  experience={experience}
+                  setExperience={setExperience}
+                  level={level}
+                  setLevel={setLevel}
+                  triggerToast={triggerToast}
+                  playSynthesizerChime={playSynthesizerChime}
+                />
 
                 {/* SAVINGS GOAL PROGRESS TRACKER */}
                 <section className="glass-card p-5 rounded-3xl border border-white/5 flex flex-col gap-4 relative overflow-hidden">
@@ -1967,6 +1992,29 @@ export default function App() {
                     </div>
                   </div>
                 </section>
+
+                {/* BIOMETRIC HEALTH LOGS */}
+                <BiometricHealth 
+                  streakDays={streakDays}
+                  playSynthesizerChime={playSynthesizerChime}
+                  triggerToast={triggerToast}
+                />
+
+                {/* DAILY HABIT CHECK-IN REWARDS */}
+                <DailyCheckIn 
+                  credits={credits}
+                  setCredits={setCredits}
+                  streakDays={streakDays}
+                  setStreakDays={setStreakDays}
+                  moneySaved={moneySaved}
+                  setMoneySaved={setMoneySaved}
+                  experience={experience}
+                  setExperience={setExperience}
+                  level={level}
+                  setLevel={setLevel}
+                  triggerToast={triggerToast}
+                  playSynthesizerChime={playSynthesizerChime}
+                />
               </motion.div>
             )}
 
