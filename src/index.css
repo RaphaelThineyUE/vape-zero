@@ -1,0 +1,171 @@
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..900;1,100..900&family=Sora:wght@100..900&display=swap');
+@import "tailwindcss";
+
+:root {
+  /* Cosmic Twilight Theme (Default Dark) */
+  --bg-app: #0c0f17;
+  --surface-lowest: #070a10;
+  --surface-low: #121622;
+  --surface-mid: #181e2e;
+  --surface-high: #222a3e;
+  --surface-highest: #2c364e;
+  
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  
+  --primary-accent: #c3f400;
+  --primary-accent-dark: #556d00;
+  --primary-tint: #abd600;
+  
+  --secondary-accent: #00eefc;
+  --secondary-accent-dark: #00686f;
+  
+  --tertiary-accent: #ffd9e0;
+  --tertiary-accent-dark: #c6005d;
+  
+  --border-color: rgba(255, 255, 255, 0.08);
+  --shadow-lime: 0 0 15px rgba(195, 244, 0, 0.3);
+  --shadow-pink: 0 0 20px rgba(255, 0, 150, 0.4);
+  --glass-bg: rgba(24, 30, 46, 0.7);
+  
+  --pulse-glow-from: rgba(255, 0, 110, 0.4);
+  --pulse-glow-to: rgba(255, 0, 110, 0.8);
+}
+
+:root.light {
+  /* Minimalist Alpine Theme (Light Mode) */
+  --bg-app: #f8fafc;
+  --surface-lowest: #ffffff;
+  --surface-low: #f1f5f9;
+  --surface-mid: #e2e8f0;
+  --surface-high: #cbd5e1;
+  --surface-highest: #94a3b8;
+  
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  
+  --primary-accent: #059669; /* Emerald Green */
+  --primary-accent-dark: #064e3b;
+  --primary-tint: #10b981;
+  
+  --secondary-accent: #0284c7; /* Sky-600 */
+  --secondary-accent-dark: #0c4a6e;
+  
+  --tertiary-accent: #fbcfe8; /* Pink-200 */
+  --tertiary-accent-dark: #9d174d; /* Pink-800 */
+  
+  --border-color: rgba(15, 23, 42, 0.08);
+  --shadow-lime: 0 2px 10px rgba(16, 185, 129, 0.1);
+  --shadow-pink: 0 2px 10px rgba(219, 39, 119, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  
+  --pulse-glow-from: rgba(239, 68, 68, 0.15);
+  --pulse-glow-to: rgba(239, 68, 68, 0.3);
+}
+
+@theme {
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui;
+  --font-display: "Sora", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --color-background: var(--bg-app);
+  --color-surface-container-lowest: var(--surface-lowest);
+  --color-surface-container-low: var(--surface-low);
+  --color-surface-container: var(--surface-mid);
+  --color-surface-container-high: var(--surface-high);
+  --color-surface-container-highest: var(--surface-highest);
+  
+  --color-primary: var(--text-main);
+  --color-on-surface: var(--text-main);
+  --color-on-surface-variant: var(--text-muted);
+  
+  --color-surface-tint: var(--primary-tint);
+  --color-primary-container: var(--primary-accent);
+  --color-on-primary-container: var(--primary-accent-dark);
+  
+  --color-secondary-container: var(--secondary-accent);
+  --color-on-secondary-container: var(--secondary-accent-dark);
+  
+  --color-tertiary-container: var(--tertiary-accent-dark);
+  --color-on-tertiary-container: var(--tertiary-accent);
+  
+  --color-secondary-fixed-dim: var(--secondary-accent);
+  --color-tertiary-fixed-dim: var(--tertiary-accent);
+  
+  --color-border: var(--border-color);
+}
+
+.neon-glow-lime {
+  box-shadow: var(--shadow-lime);
+}
+
+.neon-glow-pink {
+  box-shadow: var(--shadow-pink);
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+}
+
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 5px var(--pulse-glow-from); }
+  50% { box-shadow: 0 0 20px var(--pulse-glow-to); }
+  100% { box-shadow: 0 0 5px var(--pulse-glow-from); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes scan {
+  0% { top: 0; opacity: 0; }
+  50% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.scanning-line {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary-accent), transparent);
+  position: absolute;
+  width: 100%;
+  top: 0;
+  animation: scan 3s linear infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface-lowest);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--primary-accent);
+  border-radius: 3px;
+}
+
+/* Disable glow and scan effects globally under minimalist fx-disabled mode */
+:root.fx-disabled .scanning-line {
+  display: none !important;
+}
+
+:root.fx-disabled .animate-pulse-glow {
+  animation: none !important;
+  box-shadow: none !important;
+}
+
+:root.fx-disabled .neon-glow-lime,
+:root.fx-disabled .neon-glow-pink {
+  box-shadow: none !important;
+}
+
+/* Intercept Tailwind utility border-white/10 and border-white/5 for theme compatibility */
+.border-white\/10 {
+  border-color: var(--border-color) !important;
+}
+.border-white\/5 {
+  border-color: var(--border-color) !important;
+}
+

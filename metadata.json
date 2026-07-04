@@ -1,0 +1,6 @@
+{
+  "name": "VapeZero",
+  "description": "A gamified, cyberpunk-themed vape cessation assistant with interactive cravings crushers, daily quests, black market gear, and squad-based peer support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
